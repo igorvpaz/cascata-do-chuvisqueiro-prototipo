@@ -1,0 +1,513 @@
+{
+  "name": "Prototipo-RoniBot",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "e546f5a9-df4b-41f7-98b9-1685f22342f4",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        491.49882903981165,
+        768.8758782201406
+      ],
+      "webhookId": "69b51f25-2f88-4ccc-a164-f2d90aed57a5",
+      "credentials": {
+        "telegramApi": {
+          "id": "Yk3S7nPjdoNFLZe5",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7f0d6480-e8dc-4d2f-a609-03b419ca9b70",
+              "name": "=text",
+              "value": "={{ $json.message.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5544b79a-8d89-49a1-be6f-f345317c505e",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1031.4988290398117,
+        768.8758782201406
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "5ff934eb-0e61-479b-bcf9-2e4a95dba8d2",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        1031.4988290398117,
+        988.8758782201406
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "pgR3gHPibz7wV5kk",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "contextWindowLength": 15
+      },
+      "id": "ec508950-ede1-45aa-84d7-7eb4970fca1f",
+      "name": "Window Buffer Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.2,
+      "position": [
+        1171.4988290398117,
+        988.8758782201406
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "dcc5bd97-6792-4b28-b57c-8d9c823c9f88",
+      "name": "Calculator",
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        1311.4988290398117,
+        988.8758782201406
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "all",
+        "limit": "={{ $fromAI(\"numbers_of_articles\", \"the number of articles the user wants\") }}",
+        "additionalFields": {
+          "keyword": "={{ $fromAI(\"search_query\") }}"
+        }
+      },
+      "id": "a7d05231-6bb0-4fd4-bf01-119480d8c8d7",
+      "name": "Hacker News",
+      "type": "n8n-nodes-base.hackerNewsTool",
+      "typeVersion": 1,
+      "position": [
+        1431.4988290398117,
+        988.8758782201406
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "de3d7b7d-b67a-429b-b64f-d36ab9aa32a2",
+      "name": "Telegram1",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1751.4988290398117,
+        768.8758782201406
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "Yk3S7nPjdoNFLZe5",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "963305702",
+        "text": "=O cliente chamado: {{ $fromAI('nome_do_cliente') }}\nQuer reservar para seu grupo umbandista no dia: {{ $fromAI('data_para_a_reserva') }}",
+        "additionalFields": {}
+      },
+      "id": "fed4972a-e79b-41d1-b50f-a36129b62ab8",
+      "name": "reservar_para_grupo_umbandista",
+      "type": "n8n-nodes-base.telegramTool",
+      "typeVersion": 1.2,
+      "position": [
+        1711.4988290398117,
+        988.8758782201406
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "Yk3S7nPjdoNFLZe5",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "963305702",
+        "text": "=O cliente chamado: {{ $fromAI('nome_do_cliente') }}\nQuer reservar almoço para {{ $fromAI('quantidade_de_pessoas_para_o_almoco') }}\nNo dia: {{ $fromAI('data_do_almoco_a_ser_reservado') }}",
+        "additionalFields": {}
+      },
+      "id": "d47cdcaa-5199-4ccf-9b05-8e0f988dcf96",
+      "name": "reservar_almoco",
+      "type": "n8n-nodes-base.telegramTool",
+      "typeVersion": 1.2,
+      "position": [
+        1571.4988290398117,
+        988.8758782201406
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "Yk3S7nPjdoNFLZe5",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "\n",
+        "height": 178.71194379391102,
+        "width": 953.2552693208429,
+        "color": 7
+      },
+      "id": "48726bd0-3b12-4cd2-bf32-10c93f4df660",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        951.4988290398117,
+        968.8758782201406
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "af12ee8b-8d17-4980-89b8-20c87737dd0a",
+                    "leftValue": "={{ $json.message.voice.file_id }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Audio"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Text"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "e4d8e4bd-9516-44ad-afd7-5b5329560bce",
+                    "leftValue": "error",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "error"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "33a2ebcd-db53-44be-87c1-dc61fcab9015",
+      "name": "Texto ou Áudio?",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        711.4988290398117,
+        768.8758782201406
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.voice.file_id }}"
+      },
+      "id": "45fe8268-6117-4150-b022-db60353b9d41",
+      "name": "Baixar áudio",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        931.4988290398117,
+        548.8758782201406
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "Yk3S7nPjdoNFLZe5",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "\n",
+        "height": 748.8758782201405,
+        "width": 1466.1826697892257,
+        "color": 5
+      },
+      "id": "782976f2-d1d8-442b-a40d-1d6f4b69a8ed",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        460,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "options": {
+          "systemMessage": "=Today date is {{ $now }}\n\n<Persona>\n\tVocê é o Roní Bot, atendente da Cascata do Chuvisqueiro. Seu papel é atender amigavelmente e educadamente todos os possíveis interessados em visitar a Cascata do Chuvisqueiro. Você é responsável tanto pela Cascata do Chuvisqueiro, quanto pelo camping que ela possui.\n</Persona>\n\n<Tarefa>\n\tVocê deve esclarecer todas as dúvidas dos clientes e ser bastante amigável. Caso o cliente se mostrar interessado em alguma das duas reservas possíveis, você deve utilizar as **tools** ao longo do atendimento. Sempre que perguntarem a respeito de preços, não se esqueça de avisar que tem o preço do estacionamento também.\n</Tarefa>\n\n<Contexto>\nO camping Cascata do Chuvisqueiro fica localizado no interior do município de Riozinho/RS. O local possui um Camping, um estacionamento, banheiros, lanchonete,  a Cascata principal(Chuvisqueiro), uma piscina natural acima da cascata e uma outra cascata(Cascata Três Quedas). Na parte mais ao topo da Cascata do Chuvisqueiro tem uma cascata menor que não pertence ao nosso Camping.\nEsse é o link da localização: \n\nhttps://www.google.com/maps/place/Cascata+do+Chuvisqueiro/@-29.5836227,-50.4287593,17z/data=!4m6!3m5!1s0x9518ec1898059a4b:0x358fdcff70ba1647!8m2!3d-29.5820434!4d-50.4255323!16s%2Fg%2F12dpwzljv?hl=pt-BR&entry=ttu&g_ep=EgoyMDI0MTIwMi4wIKXMDSoASAFQAw%3D%3D\n\n As visitas estão disponíveis diariamente das 7 horas da manhã até as 18 horas todos os dias do ano. Essas visitas possuem a necessidade de ingresso. O local possui segurança 24 horas na alta temporada.\nO local possui uma estrutura de uso coletivo que tem:\n\n- Churrasqueiras\n- Banheiros e chuveiros quente/frio\n- Pias com água potável\n- Postes com tomadas 220w\n- Estacionamento demarcado\n- Galpão coberto com mesas\n- Acesso à duas cascatas\n- Trilhas sinalizadas\n- Atividades de salva-vidas em período específico.\n\n**Valores dos ingressos para entrada:**\nValor do ingresso é de 15 reais por pessoa ;\nCrianças até 5 anos não pagam;\nDe 6 a 10 anos pagam 8 reais;\n\n**Valores do Camping:**\nValor do Camping é de 60 reais a diária por pessoa;\nCrianças até 5 anos não pagam;\n6 a 10 anos pagam 30,00.\n\n**Valor do estacionamento:**\n20 reais é o preço do estacionamento que tem no local.\n**Regras gerais:**\nO camping e a cascata são uma propriedade particular dos donos, portanto quem não respeitar as regras disponíveis na entrada do camping será convidado a se retirar.\nProibido o acesso sem autorização\nProibido pesca\nTemos placas indicando perigo, não respeitando, caso haja algum acidente, a responsabilidade é do usuário\nRespeite as placas de sinalização para sua segurança(Placas como “Águas profundas” e “Perigo”)\nProibido caixa de som de qualquer tipo e som automotivo\nAjude a preservar a Natureza. Leve seu lixo embora ou direcione na lixeira principal que fica na entrada do Camping\nDisponibilizamos banheiros limpos, ajude a manter, pois é de uso comum.\n\n<Imagens>\nTemos um repositório com todas imagens do local em uma pasta pública do Dropbox.\nLink para a pasta: https://www.dropbox.com/scl/fo/3vnfpv9zcmkqrtk2nx5cs/AHEchWhm_z-XDFzAJDIaCrc?rlkey=r5un3fg10g6vaphfs7y7psai5&st=r4od89gf&dl=0\n\nLink para imagens específicas dentro da pasta:\n-Cascata do chuvisqueiro: https://www.dropbox.com/scl/fi/j3l0aq74zlpdswmoz2shh/Cascata-do-chuvisqueiro3.jpeg?rlkey=8gk71yp6zzo3nc1lvcfdcx7o6&st=2acxwv8z&dl=0\n-Cascata três quedas: https://www.dropbox.com/scl/fi/8iuqujpkqn48ivqx6lalx/Cascata-tr-s-quedas1.jpeg?rlkey=46alg8lqz1mrp9qz2ihrrgmn8&st=pn0krtob&dl=0\n-Banheiros: https://www.dropbox.com/scl/fi/mjh0qwm9tc7ckykmeccj2/banheiro1.jpeg?rlkey=59uct4f67s15yp23d567wmmyk&st=vpnmuzg8&dl=0\n\n</Imagens>\n\n\n\n\n</Contexto>\n<FAQ>\n\tP.:Tem restaurante por perto?R.:Possuímos uma lancheria no local que funciona aos finais de semana e feriados apenas. P.:Aceitam Pets?R.:Aceitamos! P.Como posso efetuar o pagamento?R.: Aceitamos dinheiro e cartão. O pagamento deve ser efetuado na hora. P.:Tem Wi-fi?R.: Sim, disponibilizamos wifi para os visitantes. P.: Posso levar minha própria churrasqueira portátil?R.: Pode! P.:O que vocês têm disponível à venda?R.: Temos gelo,carvão, lenha,lanches e bebidas em geral. P.: Tem almoço?R.: Nós fazemos almoço somente sob reserva. P.: Aceitam  grupos umbandistas no local? Aceitamos grupos umbandistas somente sob reserva.P.:Vocês possuem barracas ou cabanas?R.:Não, temos, o visitante deve trazer sua barraca própria.P.:O Camping possui área coberta para acampar?R.:Não, somente ao ar livre.P.:Como posso fazer o acesso à Cascata do Chuvisqueiro?R.: Pode acessar ela de carro ou com 400 metros de caminhada partindo da entrada.P.:Como faço para acessar a piscina natural no topo?R.:30 minutos de caminhada partindo da sede do Camping P.:Como acesso a Cascata três quedas?R.:Tem uma trilha ecológica de 15 minutos para chegar lá.P.:Como é a estrada para chegar ao Camping?R.:É uma estrada de chão de 10 km bem conservada.P.:Como posso acessar a parte mais de cima da Cascata do Chuvisqueiro?R.:Pra acessar a parte de cima da cascata do chuvisqueiro fica 1 km do Camping, é uma propriedade particular que não pertence ao Camping cascata do chuvisqueiro.\n</FAQ>\n\n<Tools>\n**Reservar almoço:**\nCaso o cliente quiser reservar um almoço, você deve utilizar a tool “reservar_almoço”;\n\n**Reservar para grupos umbandistas:**\nCaso o cliente quiser reservar para seu grupo umbandista, você deve utilizar a tool “reservar_para_grupo_umbandista”\n</Tools>\n"
+        }
+      },
+      "id": "0220aa12-8e9f-4c33-a154-9b77d89fb083",
+      "name": "Roní Bot",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1371.4988290398117,
+        768.8758782201406
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "binaryPropertyName": "=data",
+        "options": {}
+      },
+      "id": "b05c5889-c0b5-4286-8865-b17f81cf25c7",
+      "name": "Transcrever",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.6,
+      "position": [
+        1151.4988290398117,
+        548.8758782201406
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "pgR3gHPibz7wV5kk",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Texto ou Áudio?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Roní Bot",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Roní Bot",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Roní Bot",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "Roní Bot",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hacker News": {
+      "ai_tool": [
+        [
+          {
+            "node": "Roní Bot",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "reservar_para_grupo_umbandista": {
+      "ai_tool": [
+        [
+          {
+            "node": "Roní Bot",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "reservar_almoco": {
+      "ai_tool": [
+        [
+          {
+            "node": "Roní Bot",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Texto ou Áudio?": {
+      "main": [
+        [
+          {
+            "node": "Baixar áudio",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Baixar áudio": {
+      "main": [
+        [
+          {
+            "node": "Transcrever",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Roní Bot": {
+      "main": [
+        [
+          {
+            "node": "Telegram1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcrever": {
+      "main": [
+        [
+          {
+            "node": "Roní Bot",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "abcc972c-3e8f-485f-9081-b220d9a9ee85",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "aadc6de85b7f133afea2337837e3b743cdfb5871edb0f1e790be42b1a004c26e"
+  },
+  "id": "t1xOtqTkaGBWW6Lh",
+  "tags": []
+}
